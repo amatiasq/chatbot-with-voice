@@ -1,17 +1,20 @@
-import speech_recognition as sr
+import pyttsx3
 
 
-class VoiceRecognitionModule:
-    def __init__(self, key=None):
-        self.key = key
-        self.r = sr.Recognizer()
+class SpeechModule:
+    def __init__(self, lang, voice=0, volume=1, rate=125):
+        self.engine = pyttsx3.init()
+        self.engine.setProperty("rate", rate)
+        self.engine.setProperty("volume", volume)
 
-    def recognize(self):
-        with sr.Microphone() as source:
-            print("Speak Anything : ")
-            audio = self.r.listen(source)
-            try:
-                text = self.r.recognize_google(audio, key=self.key, language="es")
-                return text
-            except:
-                return None
+        voices = self.engine.getProperty("voices")
+        lang_voices = [x for x in voices if lang in x.languages]
+
+        for x in lang_voices:
+            print(x)
+
+        self.engine.setProperty("voice", lang_voices[voice].id)
+
+    def talk(self, text):
+        self.engine.say(text)
+        self.engine.runAndWait()
